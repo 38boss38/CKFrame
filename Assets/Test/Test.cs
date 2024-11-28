@@ -2,21 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.EventSystems;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class Test : MonoBehaviour
 {
-    public GameObject Cube;
-    private void Start()
+    void Start()
     {
-        
+        CubeController cube = ResManager.Instance.Load<CubeController>("Cube");
+        cube.OnClick(Click);
     }
 
-    private void Update()
+    void Click(PointerEventData data,params object[] args)
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            PoolManager.Instance.GetGameObject<TestPool>(Cube);
-        }
+        Debug.Log("鼠标点击位置"+data.position);
+        Debug.Log("参数个数"+args.Length);
     }
 }
 

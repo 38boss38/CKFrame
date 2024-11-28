@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// 对象池数据
+/// </summary>
 public class GameObjectPoolData
 {
     // 对象池中 父节点
     public GameObject fatherObj;
 
-    // 对象列表
+    // 对象容器
     public Queue<GameObject> poolQueue;
 
     public GameObjectPoolData(GameObject obj, GameObject poolRootObj)
@@ -37,16 +40,20 @@ public class GameObjectPoolData
     /// <summary>
     /// 拿出去
     /// </summary>
-    public GameObject GetObj()
+    public GameObject GetObj(Transform parent = null)
     {
         GameObject obj = poolQueue.Dequeue();
 
         // 显示对象
         obj.SetActive(true);
-        // 父物体置空
-        obj.transform.parent = null;
-        // 回归默认场景
-        SceneManager.MoveGameObjectToScene(obj,SceneManager.GetActiveScene());
+        // 设置父物体
+        obj.transform.SetParent(parent);
+        if (parent == null)
+        {
+            // 回归默认场景
+            SceneManager.MoveGameObjectToScene(obj, SceneManager.GetActiveScene());
+        }
+
         return obj;
     }
 }
