@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
-using UnityEditor;
 using Sirenix.OdinInspector;
 
 /// <summary>
@@ -18,23 +16,14 @@ public class GameSetting : ConfigBase
     public Dictionary<Type, bool> cacheDic =  new Dictionary<Type, bool>();
     
 #if UNITY_EDITOR
-    
-    [Button(Name = "初始化游戏配置",ButtonHeight = 50)]
-    [GUIColor(0,1,0)]
-    private void Init()
-    {
-        PoolAttributeOnEditor();
-    }
     /// <summary>
     /// 编译前执行函数
     /// </summary>
-    [InitializeOnLoadMethod]
-    private static void LoadForEditor()
+    [Button(Name = "初始化游戏配置",ButtonHeight = 50)]
+    [GUIColor(0,1,0)]
+    public void InitForEditor()
     {
-        if (GameObject.Find("GameRoot") != null)
-        {
-            GameObject.Find("GameRoot").GetComponent<GameRoot>().GameSetting.Init();
-        }
+        PoolAttributeOnEditor();
     }
 
     /// <summary>

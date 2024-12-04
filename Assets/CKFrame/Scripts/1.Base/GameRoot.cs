@@ -1,6 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class GameRoot : SingletonMono<GameRoot>
@@ -27,10 +25,10 @@ public class GameRoot : SingletonMono<GameRoot>
         DontDestroyOnLoad(gameObject);
 
         // 初始化所有管理器
-        InitMangers();
+        InitManagers();
     }
 
-    private void InitMangers()
+    private void InitManagers()
     {
         ManagerBase[] managers = GetComponents<ManagerBase>();
         for (int i = 0; i < managers.Length; i++)
@@ -38,4 +36,20 @@ public class GameRoot : SingletonMono<GameRoot>
             managers[i].Init();
         }
     }
+    
+    
+#if UNITY_EDITOR
+    [InitializeOnLoadMethod]
+    public static void InitForEditor()
+    {
+        if (Instance == null && GameObject.Find("GameRoot")!=null)
+        {
+            Instance = GameObject.Find("GameRoot").GetComponent<GameRoot>();
+            // 清空事件
+            EventManager.Clear();
+            Instance.InitManagers();
+            Instance.GameSetting.InitForEditor();
+        }
+    }
+#endif
 }
