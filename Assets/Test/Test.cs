@@ -8,46 +8,24 @@ using UnityEngine.UI;
 
 public class TestMono
 {
-    private Coroutine c;
-    public TestMono()
-    {
-        this.AddUpdateListener(OnUpdate);
-        c = this.StartCoroutine(DoAction());
-        
-    }
     
-    private void OnUpdate()
-    {
-        Debug.Log("OnUpdate");
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            this.RemoveUpdateListener(OnUpdate);
-            this.StopCoroutine(c);
-        }
-    }
-
-    IEnumerator DoAction()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(0.5f);
-            Debug.Log("DoAction");
-        }
-    }
 }
 public class Test : MonoBehaviour
 {
-    private TestMono t;
     void Start()
     {
-       //t = new TestMono();
-       ResManager.LoadGameObjectAsync<CubeController>("Cube",Action,null);
+        this.OnUpdate(Action);
+        this.OnFixedUpdate(Action);
+        this.OnLateUpdate(Action);
+        
+        this.RemoveUpdate(Action);
+        this.RemoveLateUpdate(Action);
+        this.RemoveFixedUpdate(Action);
     }
 
-    void Action(CubeController cubeController)
+    void Action()
     {
-        Debug.Log(cubeController.transform.name);
+        Debug.Log("Action");
     }
-    
 }
 

@@ -128,16 +128,44 @@ public static class CKExtension
     /// <summary>
     /// 添加Update监听
     /// </summary>
-    public static void AddUpdateListener(this object obj, Action action)
+    public static void OnUpdate(this object obj, Action action)
     {
         MonoManager.Instance.AddUpdateListener(action);
     }
     /// <summary>
     /// 移除Update监听
     /// </summary>
-    public static void RemoveUpdateListener(this object obj, Action action)
+    public static void RemoveUpdate(this object obj, Action action)
     {
         MonoManager.Instance.RemoveUpdateListener(action);
+    }
+    /// <summary>
+    /// 添加LateUpdate监听
+    /// </summary>
+    public static void OnLateUpdate(this object obj, Action action)
+    {
+        MonoManager.Instance.AddLateUpdateListener(action);
+    }
+    /// <summary>
+    /// 移除LateUpdate监听
+    /// </summary>
+    public static void RemoveLateUpdate(this object obj, Action action)
+    {
+        MonoManager.Instance.RemoveLateUpdateListener(action);
+    }
+    /// <summary>
+    /// 添加FixedUpdate监听
+    /// </summary>
+    public static void OnFixedUpdate(this object obj, Action action)
+    {
+        MonoManager.Instance.AddFixedUpdateListener(action);
+    }
+    /// <summary>
+    /// 移除FixedUpdate监听
+    /// </summary>
+    public static void RemoveFixedUpdate(this object obj, Action action)
+    {
+        MonoManager.Instance.RemoveFixedUpdateListener(action);
     }
     public static Coroutine StartCoroutine(this object obj, IEnumerator routine)
     {

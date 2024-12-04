@@ -153,10 +153,25 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
         }
     }
 
-    #endregion
+    /// <summary>
+    /// 枚举比较器
+    /// </summary>
+    private class CKEventTypeEnumComparer :Singleton<CKEventTypeEnumComparer>, IEqualityComparer<CKEventType>
+    {
+        public bool Equals(CKEventType x, CKEventType y)
+        {
+            return x == y;
+        }
+        public int GetHashCode(CKEventType obj)
+        {
+            return (int)obj;
+        }
+    }
 
+    #endregion
+    
     private Dictionary<CKEventType, ICKEventListenerEventInfos> eventInfoDic =
-        new Dictionary<CKEventType, ICKEventListenerEventInfos>();
+        new Dictionary<CKEventType, ICKEventListenerEventInfos>(CKEventTypeEnumComparer.Instance);
 
     #region 外部的访问
 

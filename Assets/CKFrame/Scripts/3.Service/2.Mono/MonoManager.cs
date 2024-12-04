@@ -3,6 +3,8 @@ using System;
 public class MonoManager : ManagerBase<MonoManager>
 {
     private Action updateEvent;
+    private Action lateUpdateEvent;
+    private Action fixedUpdateEvent;
     
     /// <summary>
     /// 添加Update监听
@@ -21,9 +23,52 @@ public class MonoManager : ManagerBase<MonoManager>
     {
         updateEvent -= action;
     }
+    
+    /// <summary>
+    /// 添加LateUpdate监听
+    /// </summary>
+    /// <param name="action"></param>
+    public void AddLateUpdateListener(Action action)
+    {
+        lateUpdateEvent += action;
+    }
+    
+    /// <summary>
+    /// 移除LateUpdate监听
+    /// </summary>
+    /// <param name="action"></param>
+    public void RemoveLateUpdateListener(Action action)
+    {
+        lateUpdateEvent -= action;
+    }
+    
+    /// <summary>
+    /// 添加FixedUpdate监听
+    /// </summary>
+    /// <param name="action"></param>
+    public void AddFixedUpdateListener(Action action)
+    {
+        fixedUpdateEvent += action;
+    }
+    
+    /// <summary>
+    /// 移除FixedUpdate监听
+    /// </summary>
+    /// <param name="action"></param>
+    public void RemoveFixedUpdateListener(Action action)
+    {
+        fixedUpdateEvent -= action;
+    }
     private void Update()
     {
         updateEvent?.Invoke();
     }
-    
+    private void LateUpdate()
+    {
+        lateUpdateEvent?.Invoke();
+    }
+    private void FixedUpdate()
+    {
+        fixedUpdateEvent?.Invoke();
+    }
 }
