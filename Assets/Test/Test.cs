@@ -6,18 +6,19 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.UI;
 
+[Serializable]
+public class TestSave
+{
+    public string Name;
+}
 public class Test : MonoBehaviour
 {
     void Start()
     {
-        CubeController cube = ResManager.Instance.Load<CubeController>("Cube");
-        cube.OnClick(Click);
+        //SaveManager.SaveObject(new TestSave(){Name = "张三"});
+        Debug.Log(SaveManager.LoadObject<TestSave>().Name);
+        Debug.Log(SaveManager.LoadObject<TestSave>().Name);
     }
-
-    void Click(PointerEventData data,params object[] args)
-    {
-        Debug.Log("鼠标点击位置"+data.position);
-        Debug.Log("参数个数"+args.Length);
-    }
+    
 }
 

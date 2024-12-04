@@ -35,7 +35,7 @@ public class PoolManager : ManagerBase<PoolManager>
     public T GetGameObject<T>(GameObject prefab, Transform parent = null) where T : UnityEngine.Object
     {
         GameObject obj = GetGameObject(prefab, parent);
-        if (obj == null)
+        if (obj != null)
         {
             return obj.GetComponent<T>();
         }

@@ -47,18 +47,26 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
     /// 某个事件中一个时间的数据包装类
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [Pool]
     private class CKEventListenerEventInfo<T>
     {
         // T: 事件本身的参数(PointerEventData、Collision)
         // object[]:事件的参数
         public Action<T, object[]> action;
         public object[] args;
+
         public void Init(Action<T, object[]> action, object[] args)
         {
             this.action = action;
             this.args = args;
         }
+
+        public void Destroy()
+        {
+            this.action = null;
+            this.args = null;
+            this.CKObjcetPushPool();
+        }
+
         public void TriggerEvent(T eventData)
         {
             action?.Invoke(eventData, args);
@@ -69,43 +77,44 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
     {
         void RemoveAll();
     }
+
     /// <summary>
     /// 一类事件的数据包装类型：包含多个CKEventListenerEventInfo
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [Pool]
     private class CKEventListenerEventInfos<T> : ICKEventListenerEventInfos
     {
         // 所有的事件
         private List<CKEventListenerEventInfo<T>> eventList = new List<CKEventListenerEventInfo<T>>();
+
         /// <summary>
         /// 添加事件
         /// </summary>
         public void AddListener(Action<T, object[]> action, params object[] args)
         {
-            CKEventListenerEventInfo<T> info = ResManager.Instance.Load<CKEventListenerEventInfo<T>>();
+            CKEventListenerEventInfo<T> info = PoolManager.Instance.GetObject<CKEventListenerEventInfo<T>>();
             info.Init(action, args);
             eventList.Add(info);
         }
-        
+
         /// <summary>
         /// 移除事件
         /// </summary>
         public void RemoveListenter(Action<T, object[]> action, bool checkArgs = false, params object[] args)
         {
             for (int i = 0; i < eventList.Count; i++)
-            {   
+            {
                 // 找到这个事件
                 if (eventList[i].action.Equals(action))
                 {
                     // 是否需要检查参数
-                    if (checkArgs && args.Length>0)
-                    {   
+                    if (checkArgs && args.Length > 0)
+                    {
                         // 参数如果相等
                         if (args.ArrayEquals(eventList[i].args))
                         {
                             // 移除
-                            eventList[i].action.CKObjcetPushPool();
+                            eventList[i].Destroy();
                             eventList.RemoveAt(i);
                             return;
                         }
@@ -113,14 +122,14 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
                     else
                     {
                         // 移除
-                        eventList[i].action.CKObjcetPushPool();
+                        eventList[i].Destroy();
                         eventList.RemoveAt(i);
                         return;
                     }
                 }
             }
         }
-    
+
         /// <summary>
         /// 移除全部，全部放进对象池
         /// </summary>
@@ -128,16 +137,18 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
         {
             for (int i = 0; i < eventList.Count; i++)
             {
-                eventList[i].CKObjcetPushPool();
+                eventList[i].Destroy();
             }
+
             eventList.Clear();
+            this.CKObjcetPushPool();
         }
 
         public void TriggerEvent(T eventData)
         {
             for (int i = 0; i < eventList.Count; i++)
             {
-               eventList[i].TriggerEvent(eventData); 
+                eventList[i].TriggerEvent(eventData);
             }
         }
     }
@@ -148,25 +159,25 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
         new Dictionary<CKEventType, ICKEventListenerEventInfos>();
 
     #region 外部的访问
-    
+
     /// <summary>
     /// 添加事件
     /// </summary>
-    public void AddListener<T>(CKEventType eventType, Action<T, object[]> action, 
+    public void AddListener<T>(CKEventType eventType, Action<T, object[]> action,
         params object[] args)
     {
         if (eventInfoDic.ContainsKey(eventType))
         {
-            (eventInfoDic[eventType] as CKEventListenerEventInfos<T>).AddListener(action,args);
+            (eventInfoDic[eventType] as CKEventListenerEventInfos<T>).AddListener(action, args);
         }
         else
         {
-            CKEventListenerEventInfos<T> infos = ResManager.Instance.Load<CKEventListenerEventInfos<T>>();
+            CKEventListenerEventInfos<T> infos = PoolManager.Instance.GetObject<CKEventListenerEventInfos<T>>();
             infos.AddListener(action, args);
             eventInfoDic.Add(eventType, infos);
         }
     }
-    
+
     /// <summary>
     /// 移除事件
     /// </summary>
@@ -175,10 +186,10 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
     {
         if (eventInfoDic.ContainsKey(eventType))
         {
-            (eventInfoDic[eventType] as CKEventListenerEventInfos<T>).RemoveListenter(action,checkArgs,args);
+            (eventInfoDic[eventType] as CKEventListenerEventInfos<T>).RemoveListenter(action, checkArgs, args);
         }
     }
-    
+
     /// <summary>
     /// 移除某一个事件类型下的全部事件
     /// </summary>
@@ -187,9 +198,10 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
         if (eventInfoDic.ContainsKey(eventType))
         {
             eventInfoDic[eventType].RemoveAll();
+            eventInfoDic.Remove(eventType);
         }
     }
-    
+
     /// <summary>
     /// 移除全部事件
     /// </summary>
@@ -199,12 +211,12 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
         {
             infos.RemoveAll();
         }
-        
+
         eventInfoDic.Clear();
     }
 
     #endregion
-    
+
     /// <summary>
     /// 触发事件
     /// </summary>
@@ -214,9 +226,10 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
         {
             (eventInfoDic[eventType] as CKEventListenerEventInfos<T>).TriggerEvent(eventData);
         }
-    } 
+    }
 
     #region 鼠标事件
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         TriggerAction(CKEventType.OnMouseEnter, eventData);
@@ -257,17 +270,21 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
     {
         TriggerAction(CKEventType.OnClickUp, eventData);
     }
+
     #endregion
 
     #region 碰撞事件
+
     private void OnCollisionEnter(Collision collision)
     {
         TriggerAction(CKEventType.OnCollisionEnter, collision);
     }
+
     private void OnCollisionStay(Collision collision)
     {
         TriggerAction(CKEventType.OnCollisionStay, collision);
     }
+
     private void OnCollisionExit(Collision collision)
     {
         TriggerAction(CKEventType.OnCollisionExit, collision);
@@ -282,38 +299,45 @@ public class CKEventListener : MonoBehaviour, IMouseEvent
     {
         TriggerAction(CKEventType.OnCollisionStay2D, collision);
     }
+
     private void OnCollisionExit2D(Collision2D collision)
     {
         TriggerAction(CKEventType.OnCollisionExit2D, collision);
     }
+
     #endregion
 
     #region 触发事件
+
     private void OnTriggerEnter(Collider other)
     {
         TriggerAction(CKEventType.OnTriggerEnter, other);
     }
+
     private void OnTriggerStay(Collider other)
     {
         TriggerAction(CKEventType.OnTriggerStay, other);
     }
+
     private void OnTriggerExit(Collider other)
     {
         TriggerAction(CKEventType.OnTriggerExit, other);
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         TriggerAction(CKEventType.OnTriggerEnter2D, collision);
     }
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         TriggerAction(CKEventType.OnTriggerStay2D, collision);
     }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         TriggerAction(CKEventType.OnTriggerExit2D, collision);
     }
-
 
     #endregion
 }

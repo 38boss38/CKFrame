@@ -44,6 +44,10 @@ public static class CKExtension
                 }
             }
         }
+        else
+        {
+            return false;
+        }
         return true;
     }
     
