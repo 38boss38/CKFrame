@@ -4,10 +4,13 @@ using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System;
+using System.Linq;
+using Unity.VisualScripting;
 
 /// <summary>
 /// 一个存档的数据
 /// </summary>
+[Serializable]
 public class SaveItem
 {
     public int saveID { get; private set; }
@@ -34,6 +37,7 @@ public static class SaveManager
     /// <summary>
     /// 存档管理器的设置数据
     /// </summary>
+    [Serializable]
     private class SaveManagerData
     {
         // 当前的存档ID
@@ -71,7 +75,110 @@ public static class SaveManager
         {
             Directory.CreateDirectory(settingDirPath);
         }
+        
+        // 获取SaveManagerDatra
+        InitSaveManagerData();
     }
+
+    #region 存档设置
+    
+    /// <summary>
+    /// 获取存档管理器数据
+    /// </summary>
+    private static void InitSaveManagerData()
+    {
+        saveManagerData = LoadFile<SaveManagerData>(saveDirPath + "/SaveManagerData");
+        if (saveManagerData == null)
+        {
+            saveManagerData = new SaveManagerData();
+            UpdataSaveManagerData();
+        }
+    }
+    
+    /// <summary>
+    /// 更新存档管理器数据
+    /// </summary>
+    public static void UpdataSaveManagerData()
+    {
+        SaveFile(saveManagerData, saveDirPath + "/SaveManagerData");
+    }
+    
+    /// <summary>
+    /// 获取所有存档
+    /// 时间久的在前面，最新的在后面
+    /// </summary>
+    /// <returns></returns>
+    public static List<SaveItem> GetAllSaveItem()
+    {
+        return saveManagerData.saveItemList;
+    }
+    
+    /// <summary>
+    /// 获取所有存档
+    /// 最新的在最前面
+    /// </summary>
+    /// <returns></returns>
+    public static List<SaveItem> GetAllSaveItemByCreateTime()
+    {
+        List<SaveItem> saveItems = new List<SaveItem>(saveManagerData.saveItemList.Count);
+        for (int i = 0; i < saveManagerData.saveItemList.Count; i++)
+        {
+            saveItems.Add(saveManagerData.saveItemList[saveManagerData.saveItemList.Count - (i + 1)]);
+        }
+
+        return saveItems;
+    }
+    
+    /// <summary>
+    /// 获取所有存档
+    /// 最新更新时间的在最上面
+    /// </summary>
+    /// <returns></returns>
+    public static List<SaveItem> GetAllSaveItemByUpdateTime()
+    {
+        List<SaveItem> saveItems = new List<SaveItem>(saveManagerData.saveItemList.Count);
+        for (int i = 0; i < saveManagerData.saveItemList.Count; i++)
+        {
+            saveItems.Add(saveManagerData.saveItemList[i]); 
+        }
+        OrderByUpdateTimeComparer orderBy = new OrderByUpdateTimeComparer();
+        saveItems.Sort(orderBy);
+        
+        return saveItems;
+    }
+
+    private class OrderByUpdateTimeComparer : IComparer<SaveItem>
+    {
+        public int Compare(SaveItem x, SaveItem y)
+        {
+            if (x.lastSaveTime > y.lastSaveTime)
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 获取所有存档
+    /// 万能解决方案
+    /// </summary>
+    public static List<SaveItem> GetAllSaveItem<T>(Func<SaveItem, T> orderFunc, bool isDescending = false)
+    {
+        if (isDescending)
+        {
+           return saveManagerData.saveItemList.OrderByDescending(orderFunc).ToList();
+        }
+        else
+        {
+            return saveManagerData.saveItemList.OrderBy(orderFunc).ToList();
+        }
+    }
+    
+    #endregion
 
     #region 关于存档
 
@@ -99,7 +206,8 @@ public static class SaveManager
         SaveItem saveItem = new SaveItem(saveManagerData.currID, DateTime.Now);
         saveManagerData.saveItemList.Add(saveItem);
         saveManagerData.currID++;
-        // TODO: 更新SaveManagerData 写入磁盘
+        // 更新SaveManagerData 写入磁盘
+        UpdataSaveManagerData();
         
         return saveItem;
     }
@@ -118,6 +226,10 @@ public static class SaveManager
             Directory.Delete(itemDir,true);
         }
         saveManagerData.saveItemList.Remove(GetSaveItem(saveID));
+        // 移除缓存
+        RemoveCache(saveID);
+        // 更新SaveManagerData 写入磁盘
+        UpdataSaveManagerData();
     }
     /// <summary>
     /// 删除存档
@@ -132,6 +244,10 @@ public static class SaveManager
             Directory.Delete(itemDir,true);
         }
         saveManagerData.saveItemList.Remove(saveItem);
+        // 移除缓存
+        RemoveCache(saveItem.saveID);
+        // 更新SaveManagerData 写入磁盘
+        UpdataSaveManagerData();
     }
 
     #endregion
@@ -189,6 +305,15 @@ public static class SaveManager
             return null;
         }
     }
+    
+    /// <summary>
+    /// 移除缓存
+    /// </summary>
+    /// <param name="saveID">存档ID</param>
+    private static void RemoveCache(int saveID)
+    {
+        cacheDic.Remove(saveID);
+    }
 
     #endregion
 
@@ -209,11 +334,38 @@ public static class SaveManager
         // 具体的保存
         SaveFile(saveObject, savePath);
         
+        // 更新存档时间
+        GetSaveItem(saveID).UpdateTime(DateTime.Now);
+        //
+        // 更新SaveManagerData 写入磁盘
+        UpdataSaveManagerData();
+        
         // 更新缓存
         SetCache(saveID,saveFileName,saveObject);
         
-        // TODO: 更新存档时间
+    }
+    
+    /// <summary>
+    /// 保存对象至某个存档中
+    /// </summary>
+    /// <param name="saveObject">要保存的对象</param>
+    /// <param name="saveFileName">保存的文件名称</param>
+    public static void SaveObject(object saveObject, string saveFileName, SaveItem saveItem)
+    {
+        // 存档所在的文件夹路径
+        string dirPath = GetSavePath(saveItem.saveID,true);
+        // 具体的对象要保存的路径
+        string savePath = dirPath + "/" + saveFileName;
+        // 具体的保存
+        SaveFile(saveObject, savePath);
         
+        // 更新存档时间
+        saveItem.UpdateTime(DateTime.Now);
+        // 更新SaveManagerData 写入磁盘
+        UpdataSaveManagerData();
+        
+        // 更新缓存
+        SetCache(saveItem.saveID,saveFileName,saveObject);
     }
 
     /// <summary>
@@ -225,15 +377,22 @@ public static class SaveManager
     {
         SaveObject(saveObject,saveObject.GetType().Name,saveID);
     }
-
-
+    
+    /// <summary>
+    /// 保存对象至某个存档中
+    /// </summary>
+    /// <param name="saveObject">要保存的对象</param>
+    public static void SaveObject(object saveObject, SaveItem saveItem)
+    {
+        SaveObject(saveObject,saveObject.GetType().Name,saveItem); 
+    }
+    
     /// <summary>
     /// 从某个具体的存档中加载某个对象
     /// </summary>
     /// <param name="saveFileName">文件名称</param>
     /// <param name="saveID">存档ID</param>
     /// <typeparam name="T">要返回的实际类型</typeparam>
-    /// <returns></returns>
     public static T LoadObject<T>(string saveFileName, int saveID = 0) where T : class
     {
         T obj = GetCache<T>(saveID, saveFileName);
@@ -249,16 +408,68 @@ public static class SaveManager
         }
         return obj;
     }
+    
+    /// <summary>
+    /// 从某个具体的存档中加载某个对象
+    /// </summary>
+    /// <param name="saveFileName">文件名称</param>
+    /// <typeparam name="T">要返回的实际类型</typeparam>
+    public static T LoadObject<T>(string saveFileName, SaveItem saveItem) where T : class
+    {
+        return LoadObject<T>(saveFileName, saveItem.saveID);
+    }
 
     /// <summary>
     /// 从某个具体的存档中加载某个对象
     /// </summary>
     /// <param name="saveID">存档ID</param>
     /// <typeparam name="T">要返回的实际类型</typeparam>
-    /// <returns></returns>
     public static T LoadObject<T>(int saveID = 0) where T : class
     {
        return LoadObject<T>(typeof(T).Name, saveID);
+    }
+    
+    /// <summary>
+    /// 从某个具体的存档中加载某个对象
+    /// </summary>
+    /// <typeparam name="T">要返回的实际类型</typeparam>
+    public static T LoadObject<T>(SaveItem saveItem) where T : class
+    {
+        return LoadObject<T>(typeof(T).Name, saveItem.saveID);
+    }
+
+    #endregion
+
+    #region 全局数据
+    
+    /// <summary>
+    /// 加载设置，全局生效，不关乎任何一个存档
+    /// </summary>
+    public static T LoadStting<T>(string fileName) where T : class
+    {
+        return LoadFile<T>(settingDirPath+"/"+ fileName);
+    }
+    /// <summary>
+    /// 加载设置，全局生效，不关乎任何一个存档
+    /// </summary>
+    public static T LoadStting<T>() where T : class
+    {
+        return LoadStting<T>(typeof(T).Name);
+    }
+    
+    /// <summary>
+    /// 保存设置，全局生效，不关乎任何一个存档
+    /// </summary>
+    public static void SaveSetting(object saveObject, string fileName)
+    {
+        SaveFile(saveObject,settingDirPath+"/"+ fileName);
+    }
+    /// <summary>
+    /// 保存设置，全局生效，不关乎任何一个存档
+    /// </summary>
+    public static void SaveSetting(object saveObject)
+    {
+        SaveSetting(saveObject,saveObject.GetType().Name);
     }
 
     #endregion
@@ -275,7 +486,11 @@ public static class SaveManager
     /// <returns></returns>
     private static string GetSavePath(int saveID, bool createDir = true)
     {
-        //TODO: 验证是否有某个存档
+        // 验证是否有某个存档
+        if (GetSaveItem(saveID)==null)
+        {
+            throw new Exception("CK:saveID 存档不存在！");
+        }
         
         string saveDir = saveDirPath + "/" + saveID;
         // 确定文件夹是否存在

@@ -15,9 +15,9 @@ public class Test : MonoBehaviour
 {
     void Start()
     {
-        //SaveManager.SaveObject(new TestSave(){Name = "张三"});
-        Debug.Log(SaveManager.LoadObject<TestSave>().Name);
-        Debug.Log(SaveManager.LoadObject<TestSave>().Name);
+        SaveManager.SaveSetting(new TestSave(){Name = "123"});
+        Debug.Log(SaveManager.LoadStting<TestSave>().Name);
+
     }
     
 }
