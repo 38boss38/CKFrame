@@ -6,26 +6,39 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TestMono
-{
-    
-}
-public class Test : MonoBehaviour
+public class Test : MonoBehaviour,IStateMachineOwner
 {
     void Start()
     {
-        this.OnUpdate(Action);
-        this.OnFixedUpdate(Action);
-        this.OnLateUpdate(Action);
         
-        this.RemoveUpdate(Action);
-        this.RemoveLateUpdate(Action);
-        this.RemoveFixedUpdate(Action);
     }
 
-    void Action()
+    private void Update()
     {
-        Debug.Log("Action");
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            UIManager.Instance.Show<Test_Window>();
+        }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            UIManager.Instance.Close<Test_Window>();
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            UIManager.Instance.Show<Test_Window2>();
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            UIManager.Instance.Close<Test_Window2>();
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            UIManager.Instance.CloseAll();
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            UIManager.Instance.Show<Test_Window>(4);
+        }
     }
 }
 
