@@ -45,6 +45,15 @@ public class UIManager : ManagerBase<UIManager>
     
     [SerializeField]
     private UILayer[] UILayers;
+    
+    // 提示窗
+    [SerializeField]
+    private UITips UITips;
+
+    public void AddTips(string info)
+    {
+        UITips.AddTips(info);
+    }
 
     /// <summary>
     /// 显示窗口
@@ -115,12 +124,13 @@ public class UIManager : ManagerBase<UIManager>
             // 缓存则隐藏
             if (info.isCache)
             {
+                info.objInstance.transform.SetAsFirstSibling();
                 info.objInstance.gameObject.SetActive(false);
             }
             // 不缓存则销毁
             else
             {
-                Destroy(info.objInstance);
+                Destroy(info.objInstance.gameObject);
                 info.objInstance = null;
             }
             UILayers[info.layerNum].OnClose();
