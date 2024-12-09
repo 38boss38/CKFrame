@@ -1,23 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ManagerBase : MonoBehaviour
+namespace CKFrame
 {
-    public virtual void Init()
+    public abstract class ManagerBase : MonoBehaviour
     {
+        public virtual void Init()
+        {
+        }
     }
-}
 
-public abstract class ManagerBase<T> : ManagerBase where T : ManagerBase<T>
-{
-    public static T Instance;
-
-    /// <summary>
-    /// 管理器的初始化
-    /// </summary>
-    public override void Init()
+    public abstract class ManagerBase<T> : ManagerBase where T : ManagerBase<T>
     {
-        Instance = this as T;
+        public static T Instance;
+
+        /// <summary>
+        /// 管理器的初始化
+        /// </summary>
+        public override void Init()
+        {
+            Instance = this as T;
+        }
     }
 }

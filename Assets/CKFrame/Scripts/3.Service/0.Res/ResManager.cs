@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class ResManager
+namespace CKFrame
+{
+    public static class ResManager
 {
     // 需要缓存的类型
     private static Dictionary<Type, bool> wantCacheDic;
@@ -148,4 +150,6 @@ public static class ResManager
         go.name = prefab.name;
         return go;
     }
+}
+
 }

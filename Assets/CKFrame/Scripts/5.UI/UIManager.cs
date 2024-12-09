@@ -1,10 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : ManagerBase<UIManager>
+namespace CKFrame
+{
+    public class UIManager : ManagerBase<UIManager>
 {
     #region 内部类
     [Serializable]
@@ -150,3 +151,5 @@ public class UIManager : ManagerBase<UIManager>
         }
     }
 }
+}
+
