@@ -129,7 +129,7 @@ namespace CKFrame
             {
                 (eventInfoDic[eventName] as EventInfo<T>).action += action;
             }
-            // 没有的话，需要新增到字典中，并添加对应的Action
+            // 没有的话，需要新增 到字典中，并添加对应的Action
             else
             {
                 EventInfo<T> eventInfo = PoolManager.Instance.GetObject<EventInfo<T>>();

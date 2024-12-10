@@ -16,8 +16,11 @@ MonoBehaviour:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: 4210950979408875074, guid: 787ccef8b7168644c876237cb413ebab, type: 3}
-    - {fileID: 4210950979408875074, guid: a6d7855907d60a543ad7421e5fa2cf69, type: 3}
+    - {fileID: 3861814545432338535, guid: d4ca159c77abf024ea8c1c5d122118c6, type: 3}
+    - {fileID: 0}
+    - {fileID: 1162442589406872207, guid: 6124a8666c752e24abd0680607f8b01e, type: 3}
+    - {fileID: 0}
+    - {fileID: 1421847900050367447, guid: 4aeb741eb298bb144b84338bbb9cdd7d, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -45,7 +48,7 @@ MonoBehaviour:
       Data: 2|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: StateMachine, Assembly-CSharp
+      Data: CKFrame.StateMachine, Assembly-CSharp
     - Name: 
       Entry: 8
       Data: 
@@ -63,7 +66,7 @@ MonoBehaviour:
       Data: 
     - Name: UIElementsDic
       Entry: 7
-      Data: 3|System.Collections.Generic.Dictionary`2[[System.Type, mscorlib],[UIElement,
+      Data: 3|System.Collections.Generic.Dictionary`2[[System.Type, mscorlib],[CKFrame.UIElement,
         Assembly-CSharp]], mscorlib
     - Name: comparer
       Entry: 7
@@ -74,7 +77,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
-      Data: 2
+      Data: 3
     - Name: 
       Entry: 7
       Data: 
@@ -83,13 +86,13 @@ MonoBehaviour:
       Data: 5|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Test_Window, Assembly-CSharp
+      Data: UI_MainMenuMainWindow, Assembly-CSharp
     - Name: 
       Entry: 8
       Data: 
     - Name: $v
       Entry: 7
-      Data: 6|UIElement, Assembly-CSharp
+      Data: 6|CKFrame.UIElement, Assembly-CSharp
     - Name: isCache
       Entry: 5
       Data: true
@@ -100,8 +103,8 @@ MonoBehaviour:
       Entry: 3
       Data: 0
     - Name: objInstance
-      Entry: 6
-      Data: 
+      Entry: 10
+      Data: 1
     - Name: 
       Entry: 8
       Data: 
@@ -116,22 +119,55 @@ MonoBehaviour:
       Data: 7|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Test_Window2, Assembly-CSharp
+      Data: UI_NewGameWindow, Assembly-CSharp
     - Name: 
       Entry: 8
       Data: 
     - Name: $v
       Entry: 7
-      Data: 8|UIElement, Assembly-CSharp
+      Data: 8|CKFrame.UIElement, Assembly-CSharp
     - Name: isCache
       Entry: 5
       Data: true
     - Name: prefab
       Entry: 10
-      Data: 1
+      Data: 2
     - Name: layerNum
       Entry: 3
-      Data: 1
+      Data: 0
+    - Name: objInstance
+      Entry: 10
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 7
+      Data: 9|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: CKFrame.UI_LoadingWindow, Assembly-CSharp
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: $v
+      Entry: 7
+      Data: 10|CKFrame.UIElement, Assembly-CSharp
+    - Name: isCache
+      Entry: 5
+      Data: true
+    - Name: prefab
+      Entry: 10
+      Data: 4
+    - Name: layerNum
+      Entry: 3
+      Data: 4
     - Name: objInstance
       Entry: 6
       Data: 

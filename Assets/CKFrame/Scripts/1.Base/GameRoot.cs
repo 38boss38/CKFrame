@@ -56,6 +56,13 @@ namespace CKFrame
                 EventManager.Clear();
                 Instance.InitManagers();
                 Instance.GameSetting.InitForEditor();
+                
+                // 场景的所有窗口都进行一次Show
+                UI_WindowBase[] window = Instance.transform.GetComponentsInChildren<UI_WindowBase>();
+                foreach (var win in window)
+                {
+                    win.OnShow();
+                }
             }
         }
     #endif

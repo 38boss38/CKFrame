@@ -48,7 +48,7 @@ namespace CKFrame
         }
         
         /// <summary>
-        /// 点击 是 / 确认
+        /// 点击 否 / 取消
         /// </summary>
         public virtual void OnCloseClick()
         {
@@ -56,7 +56,7 @@ namespace CKFrame
         }
         
         /// <summary>
-        /// 点击 否 / 取消
+        /// 点击 是 / 确认
         /// </summary>
         public virtual void OnYesClick()
         {

@@ -44,6 +44,7 @@ namespace CKFrame
         get { return GameRoot.Instance.GameSetting.UIElementsDic; }
     }
     
+    private const string TipsLocalizationPackName = "Tips";
     [SerializeField]
     private UILayer[] UILayers;
     
@@ -54,6 +55,11 @@ namespace CKFrame
     public void AddTips(string info)
     {
         UITips.AddTips(info);
+    }
+    
+    public void AddTipsByLocailzation(string tipsKeyName)
+    {
+        UITips.AddTips(LocalizationManager.Instance.GetContent<L_Text>(TipsLocalizationPackName,tipsKeyName).content);
     }
 
     /// <summary>

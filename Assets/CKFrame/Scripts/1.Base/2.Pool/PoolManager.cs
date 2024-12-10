@@ -64,7 +64,6 @@ namespace CKFrame
                 obj = GameObject.Instantiate(prefab, parent);
                 obj.name = name;
             }
-
             return obj;
         }
 
