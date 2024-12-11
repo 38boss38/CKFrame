@@ -43,7 +43,7 @@ namespace CKFrame
         {
             Debug.Log((int)progressValue * 100f + "%");
             progress_Text.text = (int)progressValue * 100f + "%";
-            fill_Image.fillAmount = 0f;
+            fill_Image.fillAmount = (int)progressValue * 100f;
         }
     }
 

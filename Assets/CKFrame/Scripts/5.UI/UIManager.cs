@@ -128,6 +128,7 @@ namespace CKFrame
             UIElement info = UIElementsDic[type];
             if (info.objInstance == null) return;
             
+            info.objInstance.OnClose();
             // 缓存则隐藏
             if (info.isCache)
             {
@@ -153,7 +154,7 @@ namespace CKFrame
         var enumerator = UIElementsDic.GetEnumerator();
         while (enumerator.MoveNext())
         {
-            enumerator.Current.Value.objInstance.Close();
+            enumerator.Current.Value.objInstance?.Close();
         }
     }
 }

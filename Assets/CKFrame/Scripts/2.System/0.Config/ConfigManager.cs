@@ -14,7 +14,7 @@ namespace CKFrame
         /// <param name="id">id</param>
         /// <typeparam name="T">具体的配置类型</typeparam>
         /// <returns></returns>
-        public T GetConfig<T>(string configTypeName, int id) where T : ConfigBase
+        public T GetConfig<T>(string configTypeName, int id = 0) where T : ConfigBase
         {
             return configSetting.GetConfig<T>(configTypeName, id);
         }

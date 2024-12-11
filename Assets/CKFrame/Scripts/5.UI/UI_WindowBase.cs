@@ -41,9 +41,17 @@ namespace CKFrame
         /// <summary>
         /// 关闭
         /// </summary>
-        public virtual void Close()
+        public void Close()
         {
+            OnClose();
             UIManager.Instance.Close(Type);
+        }
+        
+        /// <summary>
+        /// 关闭时额外执行的内容
+        /// </summary>
+        public virtual void OnClose()
+        {
             CancelEventListener();
         }
         
