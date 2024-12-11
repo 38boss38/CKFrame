@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using CKFrame;
-using Unity.VisualScripting;
 
 [UIElement(true,"UI/SaveWindow",1)]
 public class UI_SaveWindow : UI_WindowBase
@@ -29,10 +27,10 @@ public class UI_SaveWindow : UI_WindowBase
         
     }
 
-    public override void Close()
+    public override void OnClose()
     {
         AudioManager.Instance.PlayOnShot("Audio/Button",UIManager.Instance);
-        base.Close();
+        base.OnClose();
     }
 
     protected override void RegisterEventListener()
@@ -44,6 +42,11 @@ public class UI_SaveWindow : UI_WindowBase
     private void UpdateSaveItemFlag()
     {
         wantUpdate = true;
+        // 如果当前我是激活状态，那么应该立刻刷新，而不是等到下一次打开刷新
+        if (gameObject.activeInHierarchy)
+        {
+            UpdateAllSaveItem();
+        }
     }
 
     /// <summary>

@@ -21,11 +21,13 @@ public class MainMenuManager : LogicManagerBase<MainMenuManager>
     protected override void RegisterEventListener()
     {
        EventManager.AddEventListener<string>("CreatNewSaveAndEnterGame",CreatNewSaveAndEnterGame);
+       EventManager.AddEventListener<SaveItem,UserData>("EnterGame",EnterGame);
     }
 
     protected override void CancelEventListener()
     {
         EventManager.RemoveEventListener<string>("CreatNewSaveAndEnterGame",CreatNewSaveAndEnterGame);
+        EventManager.RemoveEventListener<SaveItem,UserData>("EnterGame",EnterGame);
     }
     
     /// <summary>
@@ -35,20 +37,27 @@ public class MainMenuManager : LogicManagerBase<MainMenuManager>
     {
         // 建立存档
         SaveItem saveItem = SaveManager.CreateSaveItem();
-        Debug.Log(userName + "创建存档");
+
+        //创建首次存档时的用户数据
+        UserData userData = new UserData(userName);
+        SaveManager.SaveObject(userData, saveItem);
         
         EventManager.EventTrigger("UpdateSaveItem");
-
-        // TODO:创建首次存档时的用户数据
+        EventManager.EventTrigger("UpdateRankItem");
         
         // 进入游戏
-        EnterGame(saveItem);
+        EnterGame(saveItem, userData);
     }
 
-    private void EnterGame(SaveItem saveItem)
+    private void EnterGame(SaveItem saveItem,UserData userData)
     {
-        // TODO:交给GameManager去实现
-        Debug.Log("进入游戏");
-        SceneManager.LoadScene("Game");
+        // 关闭全部UI
+        UIManager.Instance.CloseAll();
+        
+        GameManager.Instance.EnterGame(saveItem, userData);
+        // 显示加载面板
+        UIManager.Instance.Show<UI_LoadingWindow>();
+        SceneManager.LoadSceneAsync("Game");
+        
     }
 }

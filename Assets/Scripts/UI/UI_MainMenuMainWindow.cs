@@ -61,10 +61,12 @@ public class UI_MainMenuMainWindow : UI_WindowBase
     private void Rank_ButtonClick()
     {
         PlayButtonAudio();
+        UIManager.Instance.Show<UI_RankWindow>();
     }
     private void Setting_ButtonClick()
     {
         PlayButtonAudio();
+        UIManager.Instance.Show<UI_SettingWindow>();
     }
     private void Quit_ButtonClick()
     {

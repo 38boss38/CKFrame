@@ -34,10 +34,10 @@ public class UI_NewGameWindow : UI_WindowBase
         Play_Button_Text.CKLocaSet(LocalSetPackName,"Play_Button");
     }
 
-    public override void Close()
+    public override void OnClose()
     {
         UserName_InputField.text = "";
-        base.Close();
+        base.OnClose();
     }
 
     public override void OnYesClick()
@@ -53,7 +53,6 @@ public class UI_NewGameWindow : UI_WindowBase
             EventManager.EventTrigger<string>("CreatNewSaveAndEnterGame",UserName_InputField.text);
             base.OnYesClick();
         }
-        
     }
 
     public override void OnCloseClick()
