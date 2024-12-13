@@ -43,7 +43,6 @@ namespace CKFrame
         /// </summary>
         public void Close()
         {
-            OnClose();
             UIManager.Instance.Close(Type);
         }
         

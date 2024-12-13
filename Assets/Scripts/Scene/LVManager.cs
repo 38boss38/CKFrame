@@ -8,7 +8,10 @@ public class LVManager : LogicManagerBase<LVManager>
 {
     private void Start()
     {
-        Debug.Log("游戏开始了");
+        // 打开游戏主窗口
+        UIManager.Instance.Show<UI_GameMainWindow>();
+        // 初始化玩家
+        Player_Controller.Instance.Init(ConfigManager.Instance.GetConfig<Player_Config>("Player"));
     }
 
     protected override void RegisterEventListener()
