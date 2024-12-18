@@ -154,7 +154,11 @@ namespace CKFrame
         var enumerator = UIElementsDic.GetEnumerator();
         while (enumerator.MoveNext())
         {
-            enumerator.Current.Value.objInstance?.Close();
+            if (enumerator.Current.Value.objInstance != null &&
+                enumerator.Current.Value.objInstance.gameObject.activeInHierarchy == true)
+            {
+                enumerator.Current.Value.objInstance?.Close();
+            }
         }
     }
 }

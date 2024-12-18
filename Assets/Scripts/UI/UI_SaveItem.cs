@@ -39,7 +39,7 @@ public class UI_SaveItem : MonoBehaviour
         
         Time_Text.text = saveItem.lastSaveTime.ToString("g");
         // 用户数据
-        UserData userData = SaveManager.LoadObject<UserData>(saveItem);
+        userData = SaveManager.LoadObject<UserData>(saveItem);
         UserName_Text.text = userData.UserName;
         Score_Text.text = userData.Score.ToString();
     }
@@ -56,7 +56,7 @@ public class UI_SaveItem : MonoBehaviour
         AudioManager.Instance.PlayOnShot("Audio/Button",UIManager.Instance);
         SaveManager.DeleteSaveItem(saveItem);
         EventManager.EventTrigger("UpdateSaveItem");
-        // TODO:更新排行榜
+        EventManager.EventTrigger("UpdateRankItem");
     }
 
     private void MouseEnter(PointerEventData eventData,params object[] args)

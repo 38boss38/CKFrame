@@ -25,6 +25,12 @@ public class UI_GameMainWindow : UI_WindowBase
         EventManager.RemoveEventListener<int,int>("UpdateBullet",UpdateBullet);
     }
 
+    public override void OnShow()
+    {
+        base.OnShow();
+        HPBar_Fill_Image.fillAmount = 1;
+    }
+
     private void UpdateHP(int hp)
     {
         HPBar_Fill_Image.fillAmount = hp / 100f;

@@ -16,28 +16,34 @@ public class Bullet : MonoBehaviour
     {
         rb.AddForce(dir.normalized * movePower);
         trailRenderer.emitting = true;
+        collider.enabled = true;
         this.attack = attack;
+        
+        Invoke("DestoryOnInit",8f);
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        CancelInvoke("DestoryOnInit");
         StartCoroutine(Destroy());
-        collider.enabled = false;
-        rb.velocity = Vector3.zero;
-        trailRenderer.emitting = false;
-        Debug.Log(other.gameObject.name);
-        
         // TODO:攻击AI
         if (other.gameObject.CompareTag("Monster"))
         {
-            
+            other.gameObject.GetComponent<Monster_Controller>().GetHit(attack);
         }
         
-        
+    }
+
+    private void DestoryOnInit()
+    {
+        StartCoroutine(Destroy());
     }
 
     IEnumerator Destroy()
     {
+        collider.enabled = false;
+        rb.velocity = Vector3.zero;
+        trailRenderer.emitting = false;
         yield return new WaitForSeconds(2f);
         //销毁自身
         DoDestroy();

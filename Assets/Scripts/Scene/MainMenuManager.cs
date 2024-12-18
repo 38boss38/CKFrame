@@ -12,6 +12,10 @@ public class MainMenuManager : LogicManagerBase<MainMenuManager>
 {
     private void Start()
     {
+        // 关闭所有UI
+        UIManager.Instance.CloseAll();
+        // 游戏恢复
+        Time.timeScale = 1;
         // 播放背景音乐
         AudioManager.Instance.PlayBGAudio("Audio/BG/Menu");
         // 显示主菜单窗口
@@ -51,9 +55,6 @@ public class MainMenuManager : LogicManagerBase<MainMenuManager>
 
     private void EnterGame(SaveItem saveItem,UserData userData)
     {
-        // 关闭全部UI
-        UIManager.Instance.CloseAll();
-        
         GameManager.Instance.EnterGame(saveItem, userData);
         // 显示加载面板
         UIManager.Instance.Show<UI_LoadingWindow>();
